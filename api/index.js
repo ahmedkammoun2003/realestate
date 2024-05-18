@@ -15,3 +15,12 @@ app.listen(3000, () => {
 });
 app.use('/api',userRoute);
 app.use('/auth', authRoute);
+app.use((err,req,res,next)=>{
+    const statuscode = err.statuscode || 500;
+    const message = err.message || "Something went wrong";
+    return res.status(statuscode).json({
+        success: false,
+        statuscode,
+        message
+    });
+});
