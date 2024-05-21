@@ -14,7 +14,7 @@ app.listen(3000, () => {
     console.log(`Server started on port 3000`);
 });
 app.use('/api',userRoute);
-app.use('/auth', authRoute);
+app.use('/api/auth', authRoute);
 app.use((err,req,res,next)=>{
     const statuscode = err.statuscode || 500;
     const message = err.message || "Something went wrong";
