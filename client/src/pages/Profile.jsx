@@ -58,7 +58,7 @@ export const Profile = () => {
         />
         <img
           onClick={() => userphoto.current.click()}
-          className="rounded-full h-7 w-7 object-cover cursor-pointer self-center mt-5"
+          className="rounded-full h-30 w-30 object-cover cursor-pointer self-center mt-5"
           src={FormData.avatar || currentUser.avatar}
           alt="profile"
         />
