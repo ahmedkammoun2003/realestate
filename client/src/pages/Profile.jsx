@@ -136,6 +136,21 @@ export const Profile = () => {
       SetListingError(true);
     }
   };
+  const handleDeleteListing = async (id) => {
+    try {
+      const res = await fetch(`/api/listings/delete/${id}`, {
+        method: "DELETE",
+      });
+      const data = await res.json();
+      if (data.success === false) {
+        console.log(data.message);
+        return;
+      }
+      setListing((prev) => prev.filter((listing) => listing._id !== id));
+    } catch (error) {
+      console.error(error.message);
+    }
+  };
   return (
     <div className="p-3 max-w-lg mx-auto">
       <h1 className="text-3xl font-semibold text-center my-7">Profile</h1>
@@ -231,7 +246,9 @@ export const Profile = () => {
 
       {Listing && Listing.length > 0 ? (
         <div className="flex flex-col gap-5">
-          <h1 className="text-center my-1 text-2xl font-semibold ">Your Listings</h1>
+          <h1 className="text-center my-1 text-2xl font-semibold ">
+            Your Listings
+          </h1>
           {Listing.map((house, index) => (
             <div
               className="border rounded-lg p-3 flex justify-between items-center gap-4"
@@ -251,7 +268,12 @@ export const Profile = () => {
                 <p>{house.name}</p>
               </Link>
               <div className="flex flex-col gap-2 items-center">
-                <button className="text-red-700 uppercase">Delete</button>
+                <button
+                  onClick={() => handleDeleteListing(house._id)}
+                  className="text-red-700 uppercase"
+                >
+                  Delete
+                </button>
                 <button className="text-green-700 uppercase">Edit</button>
               </div>
             </div>
