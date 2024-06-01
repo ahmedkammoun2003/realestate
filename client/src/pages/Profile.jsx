@@ -7,7 +7,7 @@ import {
   uploadBytesResumable,
 } from "firebase/storage";
 import { app } from "../firebase.js";
-import { Link} from "react-router-dom"
+import { Link } from "react-router-dom";
 import {
   updateStart,
   updateSuccess,
@@ -28,8 +28,9 @@ export const Profile = () => {
   const [FileError, setFileError] = useState(false);
   const [FormData, setFormData] = useState({});
   const [UpdateSuccess, SetUpdateSuccess] = useState(false);
+  const [ListingError, SetListingError] = useState(false);
+  const [Listing, setListing] = useState([]);
   const dispatch = useDispatch();
-
   useEffect(() => {
     if (file) {
       handleFileUpload(file);
@@ -90,14 +91,14 @@ export const Profile = () => {
       SetUpdateSuccess(false);
     }
   };
-  const handleDeleteUser = async() => {
+  const handleDeleteUser = async () => {
     try {
       dispatch(deleteStart());
-      const res = await fetch(`/api/delete/${currentUser._id}`,{
-        method: 'DELETE',
+      const res = await fetch(`/api/delete/${currentUser._id}`, {
+        method: "DELETE",
       });
       const data = await res.json();
-      if(data.success === false) {
+      if (data.success === false) {
         dispatch(deleteFailure(data.message));
         return;
       }
@@ -106,19 +107,33 @@ export const Profile = () => {
       dispatch(deleteFailure(error.message));
     }
   };
-  const handleSignOut = async(e) => {
+  const handleSignOut = async (e) => {
     e.preventDefault();
     try {
       dispatch(signOutStart());
-      const res = await fetch('/api/auth/signout');
+      const res = await fetch("/api/auth/signout");
       const data = await res.json();
-      if(data.success === false) {
+      if (data.success === false) {
         dispatch(signOutFailure(data.message));
         return;
       }
       dispatch(signOutSuccess(data.message));
     } catch (error) {
       dispatch(signOutFailure(error.message));
+    }
+  };
+  const handleShowListing = async () => {
+    try {
+      SetListingError(false);
+      const res = await fetch(`/api/listings/${currentUser._id}`);
+      const data = await res.json();
+      if (data.success === false) {
+        SetListingError(true);
+        return;
+      }
+      setListing(data);
+    } catch (error) {
+      SetListingError(true);
     }
   };
   return (
@@ -183,16 +198,68 @@ export const Profile = () => {
         >
           {loading ? "loading" : "update account"}
         </button>
-        <Link className="bg-green-700 text-white p-3 rounded-lg uppercase text-center hover:opacity-95" to={"/create-listing"}>
+        <Link
+          className="bg-green-700 text-white p-3 rounded-lg uppercase text-center hover:opacity-95"
+          to={"/create-listing"}
+        >
           Create Listing
         </Link>
       </form>
       <div className="flex justify-between mt-5">
-        <span onClick={handleDeleteUser} className="text-red-500 cursor-pointer">Delete Account</span>
-        <span onClick={handleSignOut} className="text-red-500 cursor-pointer">Sign out</span>
+        <span
+          onClick={handleDeleteUser}
+          className="text-red-500 cursor-pointer"
+        >
+          Delete Account
+        </span>
+        <span onClick={handleSignOut} className="text-red-500 cursor-pointer">
+          Sign out
+        </span>
       </div>
       <p className="text-red-500 mt-5">{error ? error : ""}</p>
-      <p className="text-green-500 mt-5">{UpdateSuccess ? "updated successfully":""}</p>
+      <p className="text-green-500 mt-5">
+        {UpdateSuccess ? "updated successfully" : ""}
+      </p>
+      <button
+        onClick={handleShowListing}
+        className="text-green-500  w-full"
+        type="button"
+      >
+        Show Listings
+      </button>
+      <p className="text-red-500 mt-5">{ListingError ? ListingError : ""}</p>
+
+      {Listing && Listing.length > 0 ? (
+        <div className="flex flex-col gap-5">
+          <h1 className="text-center my-1 text-2xl font-semibold ">Your Listings</h1>
+          {Listing.map((house, index) => (
+            <div
+              className="border rounded-lg p-3 flex justify-between items-center gap-4"
+              key={index}
+            >
+              <Link to={`/listings/${house._id}`}>
+                <img
+                  className="h-16 w-16 object-contain rounded-lg"
+                  src={house.imageUrls[0]}
+                  alt="listing cover"
+                />
+              </Link>
+              <Link
+                className="flex-1 text-slate-700 font-semibold hover:underline truncate"
+                to={`/listings/${house._id}`}
+              >
+                <p>{house.name}</p>
+              </Link>
+              <div className="flex flex-col gap-2 items-center">
+                <button className="text-red-700 uppercase">Delete</button>
+                <button className="text-green-700 uppercase">Edit</button>
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : (
+        ""
+      )}
     </div>
   );
 };

@@ -139,7 +139,7 @@ export default function CreateListing() {
         setError(data.message);
         return;
       }
-      navigate(`/api/listings/${data._id}`);
+      navigate(`/listings/${data._id}`);
       
     } catch (error) {
       setError(error.message);
