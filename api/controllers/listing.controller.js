@@ -58,6 +58,7 @@ export const editListing = async (req, res, next) => {
 export const getListing = async (req, res,next) => {
   try {
     const listing = await Listing.findById(req.params.id);
+    console.log(listing);
     if (!listing) {
       return next(ErrorHandler(404, "listing not found"));
     }
