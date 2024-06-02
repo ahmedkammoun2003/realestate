@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import ListingCard from "../component/ListingCard";
 
 export default function Search() {
-    const navigate = useNavigate();
+  const navigate = useNavigate();
   const [searchData, setSearchData] = useState({
     searchTerm: "",
     type: "all",
@@ -12,78 +13,86 @@ export default function Search() {
     sort: "createdAt",
     order: "desc",
   });
-  const [loading,setloading] = useState(false);
+  const [loading, setloading] = useState(false);
   const [error, setError] = useState(false);
-  const [listing, setListing] = useState({});
+  const [listing, setListing] = useState([]);
   console.log(listing);
-  useEffect(()=>{
+  useEffect(() => {
     const searchParams = new URLSearchParams(window.location.search);
-    const searchTerm = searchParams.get('searchTerm');
-    const type = searchParams.get('type');
-    const parking = searchParams.get('parking');
-    const furnished = searchParams.get('furnished');
-    const offer = searchParams.get('offer');
-    const sort = searchParams.get('sort');
-    const order = searchParams.get('order');
+    const searchTerm = searchParams.get("searchTerm");
+    const type = searchParams.get("type");
+    const parking = searchParams.get("parking");
+    const furnished = searchParams.get("furnished");
+    const offer = searchParams.get("offer");
+    const sort = searchParams.get("sort");
+    const order = searchParams.get("order");
 
     setSearchData({
-      searchTerm:searchTerm||'',
-      type:type||'all',
+      searchTerm: searchTerm || "",
+      type: type || "all",
       parking,
       furnished,
       offer,
-      sort:sort || 'createdAt',
-      order:order || 'desc',
+      sort: sort || "createdAt",
+      order: order || "desc",
     });
-    const fetchListing = async()=>{ 
-        try {
-            const searchQuery = searchParams.toString();
-            setloading(true);
-            setError(false);
-            const res = await fetch(`/api/listings/search?${searchQuery}`);
+    const fetchListing = async () => {
+      try {
+        const searchQuery = searchParams.toString();
+        setloading(true);
+        setError(false);
+        const res = await fetch(`/api/listings/search?${searchQuery}`);
 
-            const data = await res.json();
-            if (data.success === false) {
-                setError(true);
-                setloading(false);
-                console.log(data);
-                return;
-            }
-            setListing(data);
-            setloading(false);
-        } catch (error) {
-            setError(true);
-            setloading(false);
-            console.log(error);
+        const data = await res.json();
+        if (data.success === false) {
+          setError(true);
+          setloading(false);
+          console.log(data);
+          return;
         }
-     };
+        setListing(data);
+        setloading(false);
+      } catch (error) {
+        setError(true);
+        setloading(false);
+        console.log(error);
+      }
+    };
     fetchListing();
-  },[window.location.search])
+  }, [window.location.search]);
   const handleChange = (e) => {
-    if (e.target.id === 'all' || e.target.id === 'rent' || e.target.id === 'sale') {
-      setSearchData({...searchData, type: e.target.id});
+    if (
+      e.target.id === "all" ||
+      e.target.id === "rent" ||
+      e.target.id === "sale"
+    ) {
+      setSearchData({ ...searchData, type: e.target.id });
     }
-    if (e.target.id === "parking" || e.target.id === "offer" || e.target.id === "furnished") {
-      setSearchData({...searchData, [e.target.id]: e.target.checked});
+    if (
+      e.target.id === "parking" ||
+      e.target.id === "offer" ||
+      e.target.id === "furnished"
+    ) {
+      setSearchData({ ...searchData, [e.target.id]: e.target.checked });
     }
     if (e.target.id === "searchTerm") {
-      setSearchData({...searchData, searchTerm: e.target.value});
+      setSearchData({ ...searchData, searchTerm: e.target.value });
     }
     if (e.target.id === "sort_order") {
-      const [sort, order] = e.target.value.split('_');
-      setSearchData({...searchData, sort, order});
+      const [sort, order] = e.target.value.split("_");
+      setSearchData({ ...searchData, sort, order });
     }
   };
   const handleSubmit = (e) => {
     e.preventDefault();
-    const ParamUrl =new URLSearchParams();
-    ParamUrl.set('searchTerm', searchData.searchTerm);
-    ParamUrl.set('sort', searchData.sort);
-    ParamUrl.set('order', searchData.order);
-    ParamUrl.set('type', searchData.type);
-    ParamUrl.set('parking', searchData.parking);
-    ParamUrl.set('furnished', searchData.furnished);
-    ParamUrl.set('offer', searchData.offer);
+    const ParamUrl = new URLSearchParams();
+    ParamUrl.set("searchTerm", searchData.searchTerm);
+    ParamUrl.set("sort", searchData.sort);
+    ParamUrl.set("order", searchData.order);
+    ParamUrl.set("type", searchData.type);
+    ParamUrl.set("parking", searchData.parking);
+    ParamUrl.set("furnished", searchData.furnished);
+    ParamUrl.set("offer", searchData.offer);
     const searchQuery = ParamUrl.toString();
     navigate(`/search?${searchQuery}`, { replace: true });
   };
@@ -143,7 +152,9 @@ export default function Search() {
                 id="offer"
                 className="w-5"
                 onChange={handleChange}
-                checked={searchData.offer === true || searchData.offer === 'true'}
+                checked={
+                  searchData.offer === true || searchData.offer === "true"
+                }
               />
               <span>offer</span>
             </div>
@@ -156,7 +167,9 @@ export default function Search() {
                 id="parking"
                 className="w-5"
                 onChange={handleChange}
-                checked={searchData.parking === true || searchData.parking === 'true'}
+                checked={
+                  searchData.parking === true || searchData.parking === "true"
+                }
               />
               <span>Parking</span>
             </div>
@@ -166,7 +179,10 @@ export default function Search() {
                 id="furnished"
                 className="w-5"
                 onChange={handleChange}
-                checked={searchData.furnished === true || searchData.furnished === 'true'}
+                checked={
+                  searchData.furnished === true ||
+                  searchData.furnished === "true"
+                }
               />
               <span>Furnished</span>
             </div>
@@ -177,12 +193,12 @@ export default function Search() {
               id="sort_order"
               className="border rounded-lg p-3"
               onChange={handleChange}
-              value={searchData.sort + '_' + searchData.order}
+              value={searchData.sort + "_" + searchData.order}
             >
-              <option value='regularPrice_desc'>Price High to Low</option>
-              <option value='regularPrice_asc'>Price Low to High</option>
-              <option value='createdAt_desc'>Latest</option>
-              <option value='createdAt_asc'>Oldest</option>
+              <option value="regularPrice_desc">Price High to Low</option>
+              <option value="regularPrice_asc">Price Low to High</option>
+              <option value="createdAt_desc">Latest</option>
+              <option value="createdAt_asc">Oldest</option>
             </select>
           </div>
           <button className="bg-slate-700 text-white p-3 rounded-lg uppercase hover:opacity-80">
@@ -190,10 +206,19 @@ export default function Search() {
           </button>
         </form>
       </div>
-      <div className="">
+      <div className="flex flex-1 flex-col gap-4">
         <h1 className="text-3xl font-semibold border-b p-3 text-slate-700 mt-5">
           Listing Results:
         </h1>
+        <div className="p-7 w-full flex flex-wrap gap-5">
+          {!loading && listing.length === 0 ? (
+            <p className="text-xl text-slate-700 ">No listing found</p>
+          ) : null}
+          {loading ? (
+            <p className="text-xl text-slate-700 text-center">loading...</p>
+          ) : null}
+          {!loading && !error && listing ? listing.map((house)=><ListingCard key={house._id} listing={house} />):null}
+        </div>
       </div>
     </div>
   );
