@@ -6,6 +6,6 @@ const router = express.Router();
 router.get('/',test);
 router.post('/update/:id',verifyToken,updateUser);
 router.delete('/delete/:id',verifyToken,deleteUser);
-router.get('/listings/:id',verifyToken,userListings);
+router.get('/listing/:id',verifyToken,userListings);
 router.get('/:id',getUser);
 export default router;

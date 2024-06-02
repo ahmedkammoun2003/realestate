@@ -125,7 +125,7 @@ export const Profile = () => {
   const handleShowListing = async () => {
     try {
       SetListingError(false);
-      const res = await fetch(`/api/listings/${currentUser._id}`);
+      const res = await fetch(`/api/listing/${currentUser._id}`);
       const data = await res.json();
       if (data.success === false) {
         SetListingError(true);
