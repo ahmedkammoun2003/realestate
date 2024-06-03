@@ -74,7 +74,7 @@ export default function Listing() {
               <span>{listing.name}</span>
               <span>-$</span>
               <span>
-                {listing.offer ? +listing.discountPrice : +listing.regularPrice}OFF
+                {listing.offer ? +listing.discountPrice : +listing.regularPrice}
               </span>
               <span>/month</span>
 
